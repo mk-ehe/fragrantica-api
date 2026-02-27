@@ -13,7 +13,12 @@ client = MongoClient(os.getenv("MONGO_URL"))
 db = client["fragrantica_db"]
 collection = db["perfumes"]
 
-@app.get("/api/fragrance")
+
+@app.get("/")
+def home():
+    return {"commands": ["/docs", "search", "/ping" ], "author": "mk-ehe", "github": "https://github.com/mk-ehe/fragrantica-api"}
+
+@app.get("/search")
 def get_fragrance(url: str):
     existing_data = collection.find_one({"url": url})
     
