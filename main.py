@@ -16,7 +16,7 @@ collection = db["perfumes"]
 
 @app.get("/")
 def home():
-    return {"commands": ["/docs", "search", "/ping" ], "author": "mk-ehe", "github": "https://github.com/mk-ehe/fragrantica-api"}
+    return {"commands": ["/docs", "/search", "/ping" ], "author": "mk-ehe", "github": "https://github.com/mk-ehe/fragrantica-api"}
 
 @app.get("/search")
 def get_fragrance(url: str):
@@ -35,7 +35,6 @@ def get_fragrance(url: str):
         return data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
 
 @app.get("/ping")
 def ping():
