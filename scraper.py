@@ -5,6 +5,25 @@ class FragranticaScraper:
     def __init__(self):
         self.scraper = cloudscraper.create_scraper(browser={'browser': 'firefox', 'platform': 'windows', 'desktop': True})
 
+
+    def fetch_page(self, url):
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+            'Accept-Language': 'pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7',
+            'Referer': 'https://www.google.com/'
+        }
+        response = self.scraper.get(url, headers=headers)
+
+        if response.status_code != 200:
+            self.scraper = cloudscraper.create_scraper(browser={'browser': 'chrome', 'platform': 'windows', 'desktop': True})
+            response = self.scraper.get(url)
+
+        if response.status_code != 200:
+            raise ConnectionError(f"Fragrantica rejected connection. Status code: {response.status_code}")
+        
+        return response.content
+
+
     def get_first_or_none(self, tree, xpath_query):
         result = tree.xpath(xpath_query)
         return result[0].strip() if result else None
@@ -45,19 +64,6 @@ class FragranticaScraper:
             return {"linear": self.extract_notes_urls(tree, linear_xpath)}
         else:
             return {}
-
-
-    def fetch_page(self, url):
-        response = self.scraper.get(url)
-
-        if response.status_code != 200:
-            self.scraper = cloudscraper.create_scraper(browser={'browser': 'chrome', 'platform': 'windows', 'desktop': True})
-            response = self.scraper.get(url)
-
-        if response.status_code != 200:
-            raise ConnectionError(f"Fragrantica rejected connection. Status code: {response.status_code}")
-        
-        return response.content
     
     
     def get_data(self, url):
