@@ -74,8 +74,3 @@ class FragranticaScraper:
             "url": url
         }
         return data
-    
-
-scraper = FragranticaScraper()
-data = scraper.get_data("https://www.fragrantica.pl/perfumy/Viktor-Rolf/Spicebomb-Extreme-30499.html")
-print(data)
