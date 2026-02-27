@@ -31,7 +31,7 @@ class FragranticaScraper:
 
     def get_acords(self, tree, xpath_query):
         accords = tree.xpath(xpath_query)
-        return {i: accord for i, accord in enumerate(accords, start=1) if accord.strip()}
+        return {str(i): accord for i, accord in enumerate(accords, start=1) if accord.strip()}
 
 
     def extract_notes_urls(self, tree, xpath_tier):
