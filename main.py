@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from scraper import FragranticaScraper
+from mangum import Mangum
 
 load_dotenv()
 
@@ -35,3 +36,5 @@ def get_fragrance(url: str):
 @app.get("/ping")
 def ping():
     return {"status": "ok"}
+
+handler = Mangum(app)
