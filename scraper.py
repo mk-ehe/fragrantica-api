@@ -15,6 +15,38 @@ class FragranticaScraper:
         return {i: accord for i, accord in enumerate(accords, start=1) if accord.strip()}
 
 
+    def extract_notes_urls(self, tree, xpath_tier):
+        notes_dict = {}
+        tier_notes = tree.xpath(xpath_tier)
+
+        for note in tier_notes:
+            name_list = note.xpath('.//text()')
+            img_list = note.xpath('.//img/@src')
+            names = [n.strip() for n in name_list if n.strip()]
+
+            if names and img_list:
+                for name, img in zip(names, img_list):
+                    notes_dict[name] = img
+
+        return notes_dict
+
+    def get_notes_urls(self, tree):
+        top_xpath = '//*[@id="pyramid"]/div[2]/div[2]/pyramid-switch-new/div/div[1]/pyramid-level-new/div'
+        heart_xpath = '//*[@id="pyramid"]/div[2]/div[2]/pyramid-switch-new/div/div[2]/pyramid-level-new/div'
+        base_xpath = '//*[@id="pyramid"]/div[2]/div[2]/pyramid-switch-new/div/div[3]/pyramid-level-new/div'
+
+        linear_xpath = '//*[@id="pyramid"]/div[2]/div[2]'
+
+        if tree.xpath(top_xpath):
+            return {"top": self.extract_notes_urls(tree, top_xpath),
+                    "heart": self.extract_notes_urls(tree, heart_xpath),
+                    "base": self.extract_notes_urls(tree, base_xpath)}
+        elif tree.xpath(linear_xpath):
+            return {"linear": self.extract_notes_urls(tree, linear_xpath)}
+        else:
+            return {}
+
+
     def fetch_page(self, url):
         response = self.scraper.get(url)
 
@@ -28,7 +60,7 @@ class FragranticaScraper:
         return response.content
     
     
-    def get_basic_data(self, url):
+    def get_data(self, url):
         html_content = self.fetch_page(url)
         tree = html.fromstring(html_content)
 
@@ -38,12 +70,12 @@ class FragranticaScraper:
             "rating": self.get_first_or_none(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[4]/div[3]/p/span[1]/text()'),
             "amount_of_rates": self.get_first_or_none(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[4]/div[3]/p/span[3]/text()'),
             "acords": self.get_acords(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[2]/div[2]/div/div//span/text()'),
+            "notes": self.get_notes_urls(tree),
             "url": url
         }
         return data
     
 
 scraper = FragranticaScraper()
-data = scraper.get_basic_data("https://www.fragrantica.com/perfume/Fragrance-One/Office-For-Men-55166.html")
-
+data = scraper.get_data("https://www.fragrantica.pl/perfumy/Viktor-Rolf/Spicebomb-Extreme-30499.html")
 print(data)
