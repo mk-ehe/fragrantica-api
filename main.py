@@ -31,15 +31,15 @@ def get_fragrance(url: str):
     try:
         data = scraper.get_data(url)
         if not data.get("fragrance"):
-            raise HTTPException(status_code=404, detail="Fragrance not found.")
+            raise HTTPException(status_code=404, detail="Page not found.")
 
         data["search_count"] = 1
         collection.insert_one(data.copy())
         data.pop("_id", None)
         data.pop("search_count", None)
         return data
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except Exception:
+        raise HTTPException(status_code=500, detail="Internal Server Error.")
 
 @app.get("/ping")
 def ping():
