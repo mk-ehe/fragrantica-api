@@ -51,7 +51,7 @@ Below are examples of requests and responses for each endpoint.
 {
   "routes": ["/docs", "/search?url={full_url}", "/ping"],
   "author": "mk-ehe",
-  "github": "[https://github.com/mk-ehe/fragrantica-api](https://github.com/mk-ehe/fragrantica-api)"
+  "github": "https://github.com/mk-ehe/fragrantica-api"
 }
 ```
 ---
