@@ -32,11 +32,11 @@ class FragranticaScraper:
 
     def get_acords(self, tree, xpath_query):
         accords = tree.xpath(xpath_query)
-        return {str(i): accord for i, accord in enumerate(accords, start=1) if accord.strip()}
+        return [accord for accord in accords if accord.strip()]
 
 
     def extract_notes_urls(self, tree, xpath_tier):
-        notes_dict = {}
+        notes_list = []
         tier_notes = tree.xpath(xpath_tier)
 
         for note in tier_notes:
@@ -46,9 +46,12 @@ class FragranticaScraper:
 
             if names and img_list:
                 for name, img in zip(names, img_list):
-                    notes_dict[name] = img
+                    notes_list.append({
+                        "name": name,
+                        "image": img
+                    })
 
-        return notes_dict
+        return notes_list
 
     def get_notes_urls(self, tree):
         top_xpath = '//*[@id="pyramid"]/div[2]/div[2]/pyramid-switch-new/div/div[1]/pyramid-level-new/div'
@@ -72,7 +75,7 @@ class FragranticaScraper:
         tree = html.fromstring(html_content)
 
         data = {
-            "fragrance": {self.get_first_or_none(tree, '//*[@id="toptop"]/h1/text()'): self.get_first_or_none(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[2]/div[1]//img/@src')},
+            "fragrance": {"name": self.get_first_or_none(tree, '//*[@id="toptop"]/h1/text()'), "image": self.get_first_or_none(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[2]/div[1]//img/@src')},
             "gender": self.get_first_or_none(tree, '//*[@id="toptop"]/h1/span/text()'),
             "rating": self.get_first_or_none(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[4]/div[3]/p/span[1]/text()'),
             "amount_of_rates": self.get_first_or_none(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[4]/div[3]/p/span[3]/text()'),
@@ -82,3 +85,6 @@ class FragranticaScraper:
         }
         return data
     
+
+scraper = FragranticaScraper()
+print(scraper.get_data("https://www.fragrantica.pl/perfumy/Hugo-Boss/Hugo-570.html"))
