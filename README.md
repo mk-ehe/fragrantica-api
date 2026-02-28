@@ -67,44 +67,80 @@ Below are examples of requests and responses for each endpoint.
 ```json
 {
   "fragrance": {
-    "Sauvage Dior": "https://fimgs.net/mdimg/perfume-thumbs/375x500.31861.jpg"
+    "name": "Sauvage Dior",
+    "image": "https://fimgs.net/mdimg/perfume-thumbs/375x500.31861.jpg"
   },
   "gender": "for men",
   "rating": "3.86",
-  "amount_of_rates": "31,189",
-  "acords": {
-    "1": "fresh spicy",
-    "2": "amber",
-    "3": "citrus",
-    "4": "aromatic",
-    "5": "musky",
-    "6": "woody",
-    "7": "lavender",
-    "8": "herbal",
-    "9": "warm spicy"
-  },
-  {
+  "amount_of_rates": "31,203",
+  "acords": [
+    "fresh spicy",
+    "amber",
+    "citrus",
+    "aromatic",
+    "musky",
+    "woody",
+    "lavender",
+    "herbal",
+    "warm spicy"
+  ],
   "notes": {
-    "top": {
-      "Calabrian bergamot": "https://fimgs.net/mdimg/sastojci/t.75.jpg",
-      "Pepper": "https://fimgs.net/mdimg/sastojci/t.158.jpg"
-    },
-    "heart": {
-      "Sichuan Pepper": "https://fimgs.net/mdimg/sastojci/t.213.jpg",
-      "Lavender": "https://fimgs.net/mdimg/sastojci/t.1.jpg",
-      "Pink Pepper": "https://fimgs.net/mdimg/sastojci/t.91.jpg",
-      "Vetiver": "https://fimgs.net/mdimg/sastojci/t.2.jpg",
-      "Patchouli": "https://fimgs.net/mdimg/sastojci/t.34.jpg",
-      "Geranium": "https://fimgs.net/mdimg/sastojci/t.21.jpg",
-      "elemi": "https://fimgs.net/mdimg/sastojci/t.390.jpg"
-    },
-    "base": {
-      "Ambroxan": "https://fimgs.net/mdimg/sastojci/t.563.jpg",
-      "Cedar": "https://fimgs.net/mdimg/sastojci/t.41.jpg",
-      "Labdanum": "https://fimgs.net/mdimg/sastojci/t.15.jpg"
-    }
+    "top": [
+      {
+        "name": "Calabrian bergamot",
+        "image": "https://fimgs.net/mdimg/sastojci/t.75.jpg"
+      },
+      {
+        "name": "Pepper",
+        "image": "https://fimgs.net/mdimg/sastojci/t.158.jpg"
+      }
+    ],
+    "heart": [
+      {
+        "name": "Sichuan Pepper",
+        "image": "https://fimgs.net/mdimg/sastojci/t.213.jpg"
+      },
+      {
+        "name": "Lavender",
+        "image": "https://fimgs.net/mdimg/sastojci/t.1.jpg"
+      },
+      {
+        "name": "Pink Pepper",
+        "image": "https://fimgs.net/mdimg/sastojci/t.91.jpg"
+      },
+      {
+        "name": "Vetiver",
+        "image": "https://fimgs.net/mdimg/sastojci/t.2.jpg"
+      },
+      {
+        "name": "Patchouli",
+        "image": "https://fimgs.net/mdimg/sastojci/t.34.jpg"
+      },
+      {
+        "name": "Geranium",
+        "image": "https://fimgs.net/mdimg/sastojci/t.21.jpg"
+      },
+      {
+        "name": "elemi",
+        "image": "https://fimgs.net/mdimg/sastojci/t.390.jpg"
+      }
+    ],
+    "base": [
+      {
+        "name": "Ambroxan",
+        "image": "https://fimgs.net/mdimg/sastojci/t.563.jpg"
+      },
+      {
+        "name": "Cedar",
+        "image": "https://fimgs.net/mdimg/sastojci/t.41.jpg"
+      },
+      {
+        "name": "Labdanum",
+        "image": "https://fimgs.net/mdimg/sastojci/t.15.jpg"
+      }
+    ]
   },
-  "url": "https://www.fragrantica.com/perfumy/Dior/Sauvage-31861.html"
+  "url": "https://www.fragrantica.com/perfumes/Dior/Sauvage-31861.html"
 }
 ```
 
