@@ -127,6 +127,6 @@ To run this project, you need to add your **MongoDB connection string** to Verce
 ## 💻 Local Setup
 
 1. Clone the repo: `git clone https://github.com/mk-ehe/fragrantica-api`
-2. Install deps: `pip install -r requirements.txt`
+2. Install dependecies: `pip install -r requirements.txt`
 3. Create a `.env` file with your `MONGO_URL`.
 4. Start the dev server: `fastapi dev main.py`
