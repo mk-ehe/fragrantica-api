@@ -16,7 +16,7 @@ collection = db["perfumes"]
 
 @app.get("/")
 def home():
-    return {"routes": ["/docs", "/search?url='your_url'", "/ping" ], "author": "mk-ehe", "github": "https://github.com/mk-ehe/fragrantica-api"}
+    return {"routes": ["/docs", "/search?url={your_url}", "/ping" ], "author": "mk-ehe", "github": "https://github.com/mk-ehe/fragrantica-api"}
 
 @app.get("/search")
 def get_fragrance(url: str):
