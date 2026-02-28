@@ -3,7 +3,8 @@ import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from scraper import FragranticaScraper
-
+import re
+from urllib.parse import urlparse
 
 load_dotenv()
 
@@ -17,18 +18,42 @@ collection = db["perfumes"]
 
 @app.get("/")
 def home():
-    return {"routes": ["/docs", "/search?url={full_url}", "/ping" ], "author": "mk-ehe", "github": "https://github.com/mk-ehe/fragrantica-api"}
+    return {
+        "routes": [
+            "/docs",
+            "/search?url={full_url}",
+            "/ping"
+        ],
+        "author": "mk-ehe",
+        "github": "https://github.com/mk-ehe/fragrantica-api"
+        }
 
 @app.get("/search")
 def get_fragrance(url: str):
-    existing_data = collection.find_one({"url": url})
+    if not url.startswith(("http://", "https://")):
+        url = "https://" + url
     
+    try:
+        parsed_url = urlparse(url)
+        if parsed_url.scheme not in ["http", "https"]:
+            raise HTTPException(status_code=400, detail="Invalid protocol.")
+
+        domain_pattern = r"^(www\.)?fragrantica\.[a-z]{2,6}(\.[a-z]{2})?$"
+        if not re.match(domain_pattern, parsed_url.netloc):
+            raise HTTPException(status_code=400, detail="Invalid domain. Only official Fragrantica URLs are allowed.")
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"ERROR: {str(e)}", flush=True)
+        raise HTTPException(status_code=400, detail="Malformed URL provided.")
+    
+    existing_data = collection.find_one({"url": url})  
     if existing_data:
         collection.update_one({"url": url}, {"$inc": {"search_count": 1}})
         existing_data.pop("_id", None)
         existing_data.pop("search_count", None)
         return existing_data
-    
+
     try:
         data = scraper.get_data(url)
         if not data.get("fragrance"):
@@ -39,7 +64,10 @@ def get_fragrance(url: str):
         data.pop("_id", None)
         data.pop("search_count", None)
         return data
-    except Exception:
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"ERROR: {str(e)}", flush=True)
         raise HTTPException(status_code=500, detail="Internal Server Error.")
 
 @app.get("/ping")
