@@ -25,13 +25,18 @@ def get_fragrance(url: str):
     if existing_data:
         collection.update_one({"url": url}, {"$inc": {"search_count": 1}})
         existing_data.pop("_id", None)
+        existing_data.pop("search_count", None)
         return existing_data
     
     try:
         data = scraper.get_data(url)
+        if not data.get("fragrance"):
+            raise HTTPException(status_code=404, detail="Fragrance not found.")
+
         data["search_count"] = 1
         collection.insert_one(data.copy())
         data.pop("_id", None)
+        data.pop("search_count", None)
         return data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
