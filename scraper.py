@@ -19,7 +19,7 @@ class FragranticaScraper:
             response = self.scraper.get(url)
 
         if response.status_code != 200:
-            raise ConnectionError(f"Fragrantica rejected connection. Status code: {response.status_code}")
+            raise ConnectionError(f"Error status code: {response.status_code}")
         
         return response.content
 
