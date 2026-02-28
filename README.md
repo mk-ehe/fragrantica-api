@@ -49,7 +49,11 @@ Below are examples of requests and responses for each endpoint.
 **Response:**
 ```json
 {
-  "routes": ["/docs", "/search?url={full_url}", "/ping"],
+  "routes": [
+    "/docs",
+    "/search?url={full_url}",
+    "/ping"
+  ],
   "author": "mk-ehe",
   "github": "https://github.com/mk-ehe/fragrantica-api"
 }
@@ -62,7 +66,9 @@ Below are examples of requests and responses for each endpoint.
 **Response:**
 ```json
 {
-  "fragrance": "Sauvage Dior",
+  "fragrance": {
+    "Sauvage Dior": "https://fimgs.net/mdimg/perfume-thumbs/375x500.31861.jpg"
+  },
   "gender": "for men",
   "rating": "3.86",
   "amount_of_rates": "31,189",
