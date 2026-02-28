@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from pymongo import MongoClient
 from scraper import FragranticaScraper
 
+
 load_dotenv()
 
 app = FastAPI()

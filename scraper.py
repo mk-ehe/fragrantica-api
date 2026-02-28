@@ -1,6 +1,7 @@
 import cloudscraper
 from lxml import html
 
+
 class FragranticaScraper:
     def __init__(self):
         self.scraper = cloudscraper.create_scraper(browser={'browser': 'firefox', 'platform': 'windows', 'desktop': True})
@@ -71,7 +72,7 @@ class FragranticaScraper:
         tree = html.fromstring(html_content)
 
         data = {
-            "fragrance": self.get_first_or_none(tree, '//*[@id="toptop"]/h1/text()'),
+            "fragrance": {self.get_first_or_none(tree, '//*[@id="toptop"]/h1/text()'): self.get_first_or_none(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[2]/div[1]//img/@src')},
             "gender": self.get_first_or_none(tree, '//*[@id="toptop"]/h1/span/text()'),
             "rating": self.get_first_or_none(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[4]/div[3]/p/span[1]/text()'),
             "amount_of_rates": self.get_first_or_none(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[4]/div[3]/p/span[3]/text()'),
@@ -80,3 +81,4 @@ class FragranticaScraper:
             "url": url
         }
         return data
+    
