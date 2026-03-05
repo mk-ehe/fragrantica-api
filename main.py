@@ -17,7 +17,7 @@ collection = db["perfumes"]
 
 
 @app.get("/")
-def home():
+def guide():
     return {
         "routes": [
             "/docs",
