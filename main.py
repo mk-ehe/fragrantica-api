@@ -20,9 +20,9 @@ collection = db["perfumes"]
 def guide():
     return {
         "routes": [
-            "/docs",
-            "/search?url={full_url}",
-            "/ping"
+            "[GET] /docs",
+            "[GET] /search?url={full_url}",
+            "[GET] /ping"
         ],
         "author": "mk-ehe",
         "github": "https://github.com/mk-ehe/fragrantica-api"
