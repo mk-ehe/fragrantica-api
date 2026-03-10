@@ -19,7 +19,7 @@ A high-performance, serverless API built to scrape and cache perfume data from F
 | **Language** | Python 3.9+ |
 | **Framework** | FastAPI |
 | **Database** | MongoDB Atlas |
-| **Deployment** | Vercel (Serverless) |
+| **Deployment** | Vercel |
 
 ---
 
