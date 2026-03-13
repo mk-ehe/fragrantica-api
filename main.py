@@ -56,7 +56,7 @@ def get_fragrance(url: str):
 
     try:
         data = scraper.get_data(url)
-        if not data.get("fragrance"):
+        if not data.get("fragrance").get("name"):
             raise HTTPException(status_code=404, detail="Page not found.")
 
         data["search_count"] = 1
