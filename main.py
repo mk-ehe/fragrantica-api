@@ -28,12 +28,12 @@ collection = db["perfumes"]
 
 
 @app.get("/")
-def home():
+def guide():
     return {
         "routes": [
-            "/docs",
-            "/search?url={full_url}",
-            "/ping"
+            "[GET] /docs",
+            "[GET] /search?url={full_url}",
+            "[GET] /ping"
         ],
         "author": "mk-ehe",
         "github": "https://github.com/mk-ehe/fragrantica-api"
@@ -67,7 +67,7 @@ def get_fragrance(url: str):
 
     try:
         data = scraper.get_data(url)
-        if not data.get("fragrance"):
+        if not data.get("fragrance").get("name"):
             raise HTTPException(status_code=404, detail="Page not found.")
 
         data["search_count"] = 1

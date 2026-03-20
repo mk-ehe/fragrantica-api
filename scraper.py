@@ -85,6 +85,3 @@ class FragranticaScraper:
         }
         return data
     
-
-scraper = FragranticaScraper()
-print(scraper.get_data("https://www.fragrantica.pl/perfumy/Hugo-Boss/Hugo-570.html"))
