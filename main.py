@@ -5,10 +5,21 @@ from pymongo import MongoClient
 from scraper import FragranticaScraper
 import re
 from urllib.parse import urlparse
+from fastapi.middleware.cors import CORSMiddleware
+
 
 load_dotenv()
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 scraper = FragranticaScraper()
 
 client = MongoClient(os.getenv("MONGO_URL"))
