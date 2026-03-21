@@ -4,20 +4,16 @@ from lxml import html
 
 class FragranticaScraper:
     def __init__(self):
+        self.timeout = 10
         self.scraper = cloudscraper.create_scraper(browser={'browser': 'firefox', 'platform': 'windows', 'desktop': True})
-
+        
 
     def fetch_page(self, url):
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
-            'Accept-Language': 'pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7',
-            'Referer': 'https://www.google.com/'
-        }
-        response = self.scraper.get(url, headers=headers)
+        response = self.scraper.get(url, timeout=self.timeout)
 
         if response.status_code != 200:
             self.scraper = cloudscraper.create_scraper(browser={'browser': 'chrome', 'platform': 'windows', 'desktop': True})
-            response = self.scraper.get(url)
+            response = self.scraper.get(url, timeout=self.timeout)
 
         if response.status_code != 200:
             raise ConnectionError(f"Error status code: {response.status_code}")
