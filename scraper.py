@@ -26,13 +26,15 @@ class FragranticaScraper:
         return result[0].strip() if result else None
 
 
-    def get_acords(self, tree, xpath_query):
+    def get_accords(self, tree, xpath_query):
         accords = tree.xpath(xpath_query)
         return [accord for accord in accords if accord.strip()]
+    
 
     def get_colors(self, tree, xpath_query):
         colors = tree.xpath(xpath_query)
         return [color.split("background:", 1)[1].strip().split(";", 1)[0] for color in colors if "background:" in color]
+    
 
     def extract_notes_urls(self, tree, xpath_tier):
         notes_list = []
@@ -51,6 +53,7 @@ class FragranticaScraper:
                     })
 
         return notes_list
+    
 
     def get_notes_urls(self, tree):
         top_xpath = '//*[@id="pyramid"]/div[2]/div[2]/pyramid-switch-new/div/div[1]/pyramid-level-new/div'
@@ -67,22 +70,24 @@ class FragranticaScraper:
             return {"linear": self.extract_notes_urls(tree, linear_xpath)}
         else:
             return {}
+        
+
+    def merge_accords_colors(self, tree):
+        accords_list = self.get_accords(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[2]/div[2]/div/div//span/text()')
+        colors_list = self.get_colors(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[2]/div[2]/div/div//div/@style')
+        return [ {"name": name, "color": color} for name, color in zip(accords_list, colors_list) ]  
     
     
     def get_data(self, url):
         html_content = self.fetch_page(url)
         tree = html.fromstring(html_content)
 
-        acords_list = self.get_acords(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[2]/div[2]/div/div//span/text()')
-        colors_list = self.get_colors(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[2]/div[2]/div/div//div/@style')
-        acords_colors = [ {"name": name, "color": color} for name, color in zip(acords_list, colors_list) ]
-
         data = {
             "fragrance": {"name": self.get_first_or_none(tree, '//*[@id="toptop"]/h1/text()'), "image": self.get_first_or_none(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[2]/div[1]//img/@src')},
             "gender": self.get_first_or_none(tree, '//*[@id="toptop"]/h1/span/text()'),
             "rating": self.get_first_or_none(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[4]/div[3]/p/span[1]/text()'),
             "amount_of_rates": self.get_first_or_none(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[4]/div[3]/p/span[3]/text()'),
-            "acords": acords_colors,
+            "accords": self.merge_accords_colors(tree),
             "notes": self.get_notes_urls(tree),
             "url": url
         }
