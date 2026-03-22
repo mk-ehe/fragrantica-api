@@ -62,12 +62,18 @@ def get_fragrance(url: str):
     existing_data = collection.find_one({"url": url})  
     expiration_date = datetime.now(timezone.utc) - timedelta(days=7)
 
-    if existing_data and existing_data.get("time_created") and existing_data.get("time_created") > expiration_date:
-        collection.update_one({"url": url}, {"$inc": {"search_count": 1}})
-        existing_data.pop("_id", None)
-        existing_data.pop("search_count", None)
-        existing_data.pop("time_created", None)
-        return existing_data
+    if existing_data and existing_data.get("time_created"):
+        time_created = existing_data.get("time_created")
+
+        if time_created.tzinfo is None:
+            time_created = time_created.replace(tzinfo=timezone.utc)
+            
+        if time_created > expiration_date:
+            collection.update_one({"url": url}, {"$inc": {"search_count": 1}})
+            existing_data.pop("_id", None)
+            existing_data.pop("search_count", None)
+            existing_data.pop("time_created", None)
+            return existing_data
 
     try:
         data = scraper.get_data(url)
