@@ -6,6 +6,7 @@ from scraper import FragranticaScraper
 import re
 from urllib.parse import urlparse
 from fastapi.middleware.cors import CORSMiddleware
+from datetime import datetime, timezone, timedelta
 
 
 load_dotenv()
@@ -59,21 +60,32 @@ def get_fragrance(url: str):
         raise HTTPException(status_code=400, detail="Malformed URL provided.")
     
     existing_data = collection.find_one({"url": url})  
-    if existing_data:
+    expiration_date = datetime.now(timezone.utc) - timedelta(days=7)
+
+    if existing_data and existing_data.get("time_created") and existing_data.get("time_created") > expiration_date:
         collection.update_one({"url": url}, {"$inc": {"search_count": 1}})
         existing_data.pop("_id", None)
         existing_data.pop("search_count", None)
+        existing_data.pop("time_created", None)
         return existing_data
 
     try:
         data = scraper.get_data(url)
         if not data.get("fragrance").get("name"):
             raise HTTPException(status_code=404, detail="Page not found.")
+        
+        data["time_created"] = datetime.now(timezone.utc)
 
-        data["search_count"] = 1
-        collection.insert_one(data.copy())
+        if existing_data:
+            data["search_count"] = existing_data.get("search_count", 0) + 1
+            collection.replace_one({"url": url}, data.copy())
+        else:
+            data["search_count"] = 1
+            collection.insert_one(data.copy())
+
         data.pop("_id", None)
         data.pop("search_count", None)
+        data.pop("time_created", None)
         return data
     except HTTPException:
         raise
