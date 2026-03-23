@@ -72,17 +72,44 @@ Below are examples of requests and responses for each endpoint.
   },
   "gender": "for men",
   "rating": "3.86",
-  "amount_of_rates": "31,203",
-  "acords": [
-    "fresh spicy",
-    "amber",
-    "citrus",
-    "aromatic",
-    "musky",
-    "woody",
-    "lavender",
-    "herbal",
-    "warm spicy"
+  "amount_of_rates": "31,551",
+  "accords": [
+    {
+      "name": "fresh spicy",
+      "color": "#83C928"
+    },
+    {
+      "name": "amber",
+      "color": "#bc4d10"
+    },
+    {
+      "name": "citrus",
+      "color": "#F9FF52"
+    },
+    {
+      "name": "aromatic",
+      "color": "#37a089"
+    },
+    {
+      "name": "musky",
+      "color": "#E7D8EA"
+    },
+    {
+      "name": "woody",
+      "color": "#774414"
+    },
+    {
+      "name": "lavender",
+      "color": "#9B7DB8"
+    },
+    {
+      "name": "herbal",
+      "color": "#6CA47F"
+    },
+    {
+      "name": "warm spicy",
+      "color": "#CC3300"
+    }
   ],
   "notes": {
     "top": [
@@ -140,7 +167,7 @@ Below are examples of requests and responses for each endpoint.
       }
     ]
   },
-  "url": "https://www.fragrantica.com/perfumes/Dior/Sauvage-31861.html"
+  "url": "https://www.fragrantica.com/perfume/Dior/Sauvage-31861.html"
 }
 ```
 
