@@ -15,6 +15,7 @@ app = FastAPI()
 
 origins = [
     "https://scentwatch.vercel.app",
+    "http://localhost:5173"
 ]
 
 app.add_middleware(
