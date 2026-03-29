@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
@@ -7,6 +7,9 @@ import re
 from urllib.parse import urlparse
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timezone, timedelta
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 
 load_dotenv()
@@ -25,6 +28,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 scraper = FragranticaScraper()
 
@@ -46,7 +53,8 @@ def guide():
         }
 
 @app.get("/search")
-def get_fragrance(url: str):
+@limiter.limit("3/3seconds, 15/minute")
+def get_fragrance(request: Request, url: str):
     if not url.startswith(("http://", "https://")):
         url = "https://" + url
     
@@ -105,5 +113,6 @@ def get_fragrance(url: str):
         raise HTTPException(status_code=500, detail="Internal Server Error.")
 
 @app.get("/ping")
-def ping():
+@limiter.limit("20/minute")
+def ping(request: Request):
     return {"status": "ok"}
