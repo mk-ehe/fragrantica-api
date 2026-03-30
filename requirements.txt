@@ -5,3 +5,4 @@ pymongo[srv]==4.16.0
 dnspython==2.8.0
 python-dotenv==1.2.1
 pydantic==2.12.5
+slowapi
