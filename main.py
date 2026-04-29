@@ -38,6 +38,7 @@ scraper = FragranticaScraper()
 client = MongoClient(os.getenv("MONGO_URL"))
 db = client["fragrantica_db"]
 collection = db["perfumes"]
+collection_frag_data = db["fragrantica_dataset"]
 
 
 @app.get("/")
@@ -111,6 +112,32 @@ def get_fragrance(request: Request, url: str):
     except Exception as e:
         print(f"ERROR: {str(e)}", flush=True)
         raise HTTPException(status_code=500, detail="Internal Server Error.")
+    
+
+@app.get("/autocomplete")
+@limiter.limit("60/minute")
+def autocomplete(request: Request, q: str = ""):
+    if len(q) < 2:
+        return {"results": []}
+    
+    words = q.strip().split()
+    
+    and_conditions = []
+    for word in words:
+        and_conditions.append({
+            "$or": [
+                {"Perfume": {"$regex": word, "$options": "i"}},
+                {"Brand": {"$regex": word, "$options": "i"}}
+            ]
+        })
+        
+    results = list(collection_frag_data.find(
+        {"$and": and_conditions},
+        {"_id": 0, "url": 1, "Perfume": 1, "Brand": 1}
+    ).limit(10))
+    
+    return {"results": results}
+
 
 @app.get("/ping")
 @limiter.limit("20/minute")
