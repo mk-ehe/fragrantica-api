@@ -108,7 +108,7 @@ def get_fragrance(request: Request, url: str):
         raise
     except Exception as e:
         print(f"ERROR: {str(e)}", flush=True)
-        raise HTTPException(status_code=500, detail="Internal Server Error.")
+        raise HTTPException(status_code=500, detail="An error occured while fetching perfume.")
 
 @app.get("/autocomplete")
 @limiter.limit("60/minute")
