@@ -88,9 +88,6 @@ def get_fragrance(request: Request, url: str):
 
     try:
         data = scraper.get_data(url)
-        if not data.get("fragrance").get("name"):
-            raise HTTPException(status_code=404, detail="Page not found.")
-        
         data["time_created"] = datetime.now(timezone.utc)
 
         if existing_data:
@@ -104,8 +101,6 @@ def get_fragrance(request: Request, url: str):
         data.pop("search_count", None)
         data.pop("time_created", None)
         return data
-    except HTTPException:
-        raise
     except Exception as e:
         print(f"ERROR: {str(e)}", flush=True)
         raise HTTPException(status_code=500, detail="An error occured while fetching perfume.")
