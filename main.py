@@ -112,22 +112,26 @@ def autocomplete(request: Request, q: str = ""):
         return {"results": []}
     
     words = q.strip().split()
-    
     and_conditions = []
+
     for word in words:
+        escaped_word = re.escape(word)
         and_conditions.append({
             "$or": [
-                {"Perfume": {"$regex": word, "$options": "i"}},
-                {"Brand": {"$regex": word, "$options": "i"}}
+                {"Perfume": {"$regex": escaped_word, "$options": "i"}},
+                {"Brand": {"$regex": escaped_word, "$options": "i"}}
             ]
         })
         
-    results = list(collection_frag_data.find(
-        {"$and": and_conditions},
-        {"_id": 0, "url": 1, "Perfume": 1, "Brand": 1}
-    ).limit(10))
-    
-    return {"results": results}
+    try:
+        results = list(collection_frag_data.find(
+            {"$and": and_conditions},
+            {"_id": 0, "url": 1, "Perfume": 1, "Brand": 1}
+        ).limit(10))
+        return {"results": results}
+    except Exception as e:
+        print(f"ERROR: /autocomplete: {e}", flush=True)
+        raise HTTPException(status_code=500, detail="Error while searching.")
 
 @app.get("/ping")
 @limiter.limit("20/minute")
