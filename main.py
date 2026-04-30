@@ -40,30 +40,27 @@ db = client["fragrantica_db"]
 collection = db["perfumes"]
 collection_frag_data = db["fragrantica_dataset"]
 
-
 @app.get("/")
 def guide():
     return {
         "routes": [
             "[GET] /docs",
             "[GET] /search?url={full_url}",
-            "[GET] /ping"
+            "[GET] /ping",
+            "[GET] /autocomplete?q={query}"
         ],
         "author": "mk-ehe",
         "github": "https://github.com/mk-ehe/fragrantica-api"
         }
 
 @app.get("/search")
-@limiter.limit("3/3seconds, 15/minute")
+@limiter.limit("1/second, 15/minute")
 def get_fragrance(request: Request, url: str):
     if not url.startswith(("http://", "https://")):
         url = "https://" + url
     
     try:
         parsed_url = urlparse(url)
-        if parsed_url.scheme not in ["http", "https"]:
-            raise HTTPException(status_code=400, detail="Invalid protocol.")
-
         domain_pattern = r"^(www\.)?fragrantica\.[a-z]{2,6}(\.[a-z]{2})?$"
         if not re.match(domain_pattern, parsed_url.netloc):
             raise HTTPException(status_code=400, detail="Invalid domain. Only official Fragrantica URLs are allowed.")
@@ -112,7 +109,6 @@ def get_fragrance(request: Request, url: str):
     except Exception as e:
         print(f"ERROR: {str(e)}", flush=True)
         raise HTTPException(status_code=500, detail="Internal Server Error.")
-    
 
 @app.get("/autocomplete")
 @limiter.limit("60/minute")
@@ -137,7 +133,6 @@ def autocomplete(request: Request, q: str = ""):
     ).limit(10))
     
     return {"results": results}
-
 
 @app.get("/ping")
 @limiter.limit("20/minute")
