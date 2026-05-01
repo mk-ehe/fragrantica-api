@@ -30,3 +30,7 @@ jobs:
       run: |
         export PYTHONPATH=$PYTHONPATH:.
         pytest tests/
+    
+    - name: Trigger Vercel Deployment
+      if: success()
+      run: curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
