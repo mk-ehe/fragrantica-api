@@ -88,6 +88,8 @@ def get_fragrance(request: Request, url: str):
 
     try:
         data = scraper.get_data(url)
+        if not data["fragrance"].get("name") or not data.get("notes") or not data.get("accords"):
+            raise ValueError("Invalid URL or product not found.")
         data["time_created"] = datetime.now(timezone.utc)
 
         if existing_data:
