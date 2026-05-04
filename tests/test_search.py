@@ -33,6 +33,13 @@ def test_search_invalid_domain(client):
     assert response.status_code == 400
     assert response.json()["detail"].lower() == "Invalid domain. Only official Fragrantica URLs are allowed.".lower()
 
+def test_search_bad_url_path(client):
+    wrong_params = {"url": "https://www.fragrantica.pl/board/viewtopic.php?pid=1470234#p1470234"}
+    response = client.get("/search", params=wrong_params)
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Invalid URL or product not found."
+
 def test_search_malformed_url(client):
     wrong_params = {"url": "https://[::1/some-perfumes"}
     response = client.get("/search", params=wrong_params)
