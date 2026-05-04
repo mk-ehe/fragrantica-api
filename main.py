@@ -40,6 +40,7 @@ db = client["fragrantica_db"]
 collection = db["perfumes"]
 collection_frag_data = db["fragrantica_dataset"]
 
+
 @app.get("/")
 def guide():
     return {
@@ -52,6 +53,7 @@ def guide():
         "author": "mk-ehe",
         "github": "https://github.com/mk-ehe/fragrantica-api"
         }
+
 
 @app.get("/search")
 @limiter.limit("1/second, 15/minute")
@@ -109,6 +111,7 @@ def get_fragrance(request: Request, url: str):
         print(f"ERROR: {str(e)}", flush=True)
         raise HTTPException(status_code=500, detail="An error occured while fetching perfume.")
 
+
 @app.get("/autocomplete")
 @limiter.limit("60/minute")
 def autocomplete(request: Request, q: str = ""):
@@ -136,6 +139,7 @@ def autocomplete(request: Request, q: str = ""):
     except Exception as e:
         print(f"ERROR: /autocomplete: {e}", flush=True)
         raise HTTPException(status_code=500, detail="Error while searching.")
+
 
 @app.get("/ping")
 @limiter.limit("20/minute")
