@@ -83,7 +83,11 @@ class FragranticaScraper:
         tree = html.fromstring(html_content)
 
         data = {
-            "fragrance": {"name": self.get_first_or_none(tree, '//*[@id="toptop"]/h1/text()'), "image": self.get_first_or_none(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[2]/div[1]//img/@src')},
+            "fragrance": {
+                "name": self.get_first_or_none(tree, '//*[@id="toptop"]/h1/text()'), 
+                "brand": self.get_first_or_none(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[2]/div[2]/p/a/span[1]/text()'),
+                "image": self.get_first_or_none(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[2]/div[1]//img/@src')
+                },
             "gender": self.get_first_or_none(tree, '//*[@id="toptop"]/h1/span/text()'),
             "rating": self.get_first_or_none(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[4]/div[3]/p/span[1]/text()'),
             "amount_of_rates": self.get_first_or_none(tree, '//*[@id="app"]/main/div/div[1]/div[1]/div[4]/div[3]/p/span[3]/text()'),

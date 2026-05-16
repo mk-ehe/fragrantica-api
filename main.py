@@ -38,7 +38,7 @@ scraper = FragranticaScraper()
 client = MongoClient(os.getenv("MONGO_URL"))
 db = client["fragrantica_db"]
 collection = db["perfumes"]
-collection_frag_data = db["fragrantica_dataset"]
+collection_frag_dataset = db["fragrantica_dataset"]
 
 
 @app.get("/")
@@ -74,6 +74,7 @@ def get_fragrance(request: Request, url: str):
     
     existing_data = collection.find_one({"url": url})  
     expiration_date = datetime.now(timezone.utc) - timedelta(days=7)
+    response_data = None
 
     if existing_data and existing_data.get("time_created"):
         time_created = existing_data.get("time_created")
@@ -83,33 +84,48 @@ def get_fragrance(request: Request, url: str):
             
         if time_created > expiration_date:
             collection.update_one({"url": url}, {"$inc": {"search_count": 1}})
-            existing_data.pop("_id", None)
-            existing_data.pop("search_count", None)
-            existing_data.pop("time_created", None)
-            return existing_data
 
-    try:
-        data = scraper.get_data(url)
-        if not data["fragrance"].get("name") or not data.get("notes") or not data.get("accords"):
-            raise HTTPException(status_code=400, detail="Invalid URL or product not found.")
-        data["time_created"] = datetime.now(timezone.utc)
+            response_data = existing_data
 
-        if existing_data:
-            data["search_count"] = existing_data.get("search_count", 0) + 1
-            collection.replace_one({"url": url}, data.copy())
-        else:
-            data["search_count"] = 1
-            collection.insert_one(data.copy())
 
-        data.pop("_id", None)
-        data.pop("search_count", None)
-        data.pop("time_created", None)
-        return data
-    except HTTPException:
-        raise
-    except Exception as e:
-        print(f"ERROR: {str(e)}", flush=True)
-        raise HTTPException(status_code=500, detail="An error occured while fetching perfume.")
+    if not response_data:
+        try:
+            data = scraper.get_data(url)
+            if not data["fragrance"].get("name") or not data.get("notes") or not data.get("accords"):
+                raise HTTPException(status_code=400, detail="Invalid URL or product not found.")
+            
+            data["time_created"] = datetime.now(timezone.utc)
+
+            if existing_data:
+                data["search_count"] = existing_data.get("search_count", 0) + 1
+                collection.replace_one({"url": url}, data.copy())
+            else:
+                data["search_count"] = 1
+                collection.insert_one(data.copy())
+
+            collection_frag_dataset.update_one(
+                {
+                    "Perfume": data["fragrance"].get("name")
+                },
+                {"$set": {
+                    "url": url,
+                    "Perfume": data["fragrance"].get("name"),
+                    "Brand": data["fragrance"].get("brand")
+                }}, upsert=True)
+            
+            response_data = data
+    
+        except HTTPException:
+            raise
+        except Exception as e:
+            print(f"ERROR: {str(e)}", flush=True)
+            raise HTTPException(status_code=500, detail="An error occured while fetching perfume.")
+        
+    response_data.pop("_id", None)
+    response_data.pop("search_count", None)
+    response_data.pop("time_created", None)
+
+    return response_data
 
 
 @app.get("/autocomplete")
@@ -131,7 +147,7 @@ def autocomplete(request: Request, q: str = ""):
         })
         
     try:
-        results = list(collection_frag_data.find(
+        results = list(collection_frag_dataset.find(
             {"$and": and_conditions},
             {"_id": 0, "url": 1, "Perfume": 1, "Brand": 1}
         ).limit(10))
